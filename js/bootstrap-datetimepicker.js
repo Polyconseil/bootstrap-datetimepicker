@@ -1059,6 +1059,8 @@
 				type: 'changeDate',
 				date: this.date
 			});
+			if(date == null)
+				this.date = this.viewDate;
 		},
 
 		moveMinute: function (date, dir) {
