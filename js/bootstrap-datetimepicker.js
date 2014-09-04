@@ -479,7 +479,7 @@
 
 			var offset, top, left, containerOffset;
 			if (this.container instanceof $) {
-				containerOffset = this.container.offset();
+				containerOffset = this.container.offset();t
 			} else {
 				containerOffset = $(this.container).offset();
 			}
@@ -507,6 +507,8 @@
 
 			top = top - containerOffset.top;
 			left = left - containerOffset.left;
+			
+			top = top + document.body.scrollTop
 
 			this.picker.css({
 				top:    top,
