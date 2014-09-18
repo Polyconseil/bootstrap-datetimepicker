@@ -27,7 +27,7 @@
  * Make it work in bootstrap v3
  */
 
-!function ($) {
+!function ($, moment) {
 
 	function UTCDate() {
 		return new Date(Date.UTC.apply(Date, arguments));
@@ -54,6 +54,7 @@
 		this.isRTL = dates[this.language].rtl || false;
 		this.formatType = options.formatType || this.element.data('format-type') || 'standard';
 		this.format = DPGlobal.parseFormat(options.format || this.element.data('date-format') || dates[this.language].format || DPGlobal.getDefaultFormat(this.formatType, 'input'), this.formatType);
+		this.momentFormat = options.momentFormat || 'YYYY-MM-DD HH:mm';
 		this.isInline = false;
 		this.isVisible = false;
 		this.isInput = this.element.is('input');
@@ -531,7 +532,7 @@
 				fromArgs = false;
 			}
 
-			this.date = DPGlobal.parseDate(date, this.format, this.language, this.formatType);
+			this.date = DPGlobal.parseDate(date, this.format, this.momentFormat, this.language, this.formatType);
 
 			if (fromArgs) this.setValue();
 
@@ -1420,11 +1421,14 @@
 			}
 			return {separators: separators, parts: parts};
 		},
-		parseDate:        function (date, format, language, type) {
+		parseDate:        function (date, format, momentFormat, language, type) {
 			if (date instanceof Date) {
 				var dateUTC = new Date(date.valueOf() - date.getTimezoneOffset() * 60000);
 				dateUTC.setMilliseconds(0);
 				return dateUTC;
+			}
+			if (moment(date, momentFormat, true).isValid()) {
+				return new Date();
 			}
 			if (/^\d{4}\-\d{1,2}\-\d{1,2}$/.test(date)) {
 				format = this.parseFormat('yyyy-mm-dd', type);
@@ -1792,4 +1796,4 @@
 		$('[data-provide="datetimepicker-inline"]').datetimepicker();
 	});
 
-}(window.jQuery);
+}(window.jQuery, window.moment);

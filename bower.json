@@ -12,5 +12,8 @@
     ".gitignore",
     ".travis.yml",
     "minify.sh"
-  ]
+  ],
+  "dependencies": {
+    "moment": "~2.8.3"
+  }
 }
