@@ -1,6 +1,9 @@
 {
   "name": "smalot-bootstrap-datetimepicker",
-  "main": ["js/bootstrap-datetimepicker.min.js", "css/bootstrap-datetimepicker.min.css"],
+  "main": [
+    "js/bootstrap-datetimepicker.min.js",
+    "css/bootstrap-datetimepicker.min.css"
+  ],
   "ignore": [
     "build",
     "sample in bootstrap v2",
@@ -13,6 +16,7 @@
     "minify.sh"
   ],
   "dependencies": {
-    "moment": "~2.8.3"
+    "moment": "~2.8.3",
+    "moment-timezone": "~0.4.0"
   }
 }

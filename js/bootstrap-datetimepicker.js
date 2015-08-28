@@ -81,6 +81,7 @@
     this.momentFormat = options.momentFormat || 'YYYY-MM-DD HH:mm';
     this.isInline = false;
     this.isVisible = false;
+    this.timezone = options.timezone || this.element.data('timezone') || 'Europe/Paris';
     this.isInput = this.element.is('input');
     this.fontAwesome = options.fontAwesome || this.element.data('font-awesome') || false;
 
@@ -426,7 +427,7 @@
 
     getFormattedDate: function (format) {
       if (format == undefined) format = this.format;
-      return DPGlobal.formatDate(this.date, format, this.language, this.formatType);
+      return DPGlobal.formatDate(this.date, format, this.language, this.formatType, this.timezone);
     },
 
     setStartDate: function (startDate) {
@@ -925,7 +926,10 @@
                 break;
               case 'today':
                 var date = new Date();
-                date = UTCDate(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), 0);
+
+                if (this.formatType !== 'moment') {
+                  date = UTCDate(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), 0);
+                }
 
                 // Respect startDate and endDate.
                 if (date < this.startDate) date = this.startDate;
@@ -1425,6 +1429,12 @@
           return 'Y-m-d H:i';
         else
           return 'Y-m-d H:i:s';
+      } else if (type === 'moment') {
+        if (field == 'input') {
+          return 'YYYY-MM-DD HH:mm';
+        } else {
+          return 'YYYY-MM-DD HH:mm:ss';
+        }
       } else {
         throw new Error('Invalid format type.');
       }
@@ -1440,6 +1450,9 @@
     },
     nonpunctuation: /[^ -\/:-@\[-`{-~\t\n\rTZ]+/g,
     parseFormat: function (format, type) {
+      if (type === 'moment') {
+        return format;
+      }
       // IE treats \0 as a string end in inputs (truncating the value),
       // so it's a bad format delimiter, anyway
       var separators = format.replace(this.validParts(type), '\0').split('\0'),
@@ -1589,7 +1602,7 @@
       }
       return date;
     },
-    formatDate:       function (date, format, language, type) {
+    formatDate:       function (date, format, language, type, timezone) {
       if (date == null) {
         return '';
       }
@@ -1629,6 +1642,9 @@
         val.ss = (val.s < 10 ? '0' : '') + val.s;
         val.dd = (val.d < 10 ? '0' : '') + val.d;
         val.mm = (val.m < 10 ? '0' : '') + val.m;
+      } else if (type === 'moment') {
+        moment.locale(language.substring(0, 2));
+        return moment(date).tz(timezone).format(format);
       } else if (type == 'php') {
         // php format
         val = {
